@@ -25,7 +25,13 @@ SECRET_KEY = 'django-insecure--pldg9twutn34ac^g6a9qcj1cgfyr_-=xjasp)jmdco+6l)aqv
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# Access without https
+CSRF_COOKIE_SECURE = False
+
+ALLOWED_HOSTS = ["0.0.0.0"]
+
+# Allowing Apis to Access endpoints
+CORS_ORIGIN_ALLOW_ALL = True
 
 
 # Application definition
@@ -37,6 +43,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders',
+    'rest_framework',
+    'main.apps.MainConfig',
 ]
 
 MIDDLEWARE = [
@@ -47,6 +56,8 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'BusinessInteraction.urls'
