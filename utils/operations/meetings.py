@@ -33,5 +33,9 @@ class Meetings(Operations):
             "meeting_url": meeting_data.get("meeting_url", None),
             "meeting_recursive": meeting_data.get("meeting_recursive", False),
             "meeting_hosts": [],
-            "meeting_speakers": []
+            "meeting_speakers": [],
+            "meeting_meta_data": {
+                "view_once": meeting_data.get("meeting_view_once", False),
+                "allowed_viewers": meeting_data.get("meeting_allowed_viewers", []),
+            }
         }
