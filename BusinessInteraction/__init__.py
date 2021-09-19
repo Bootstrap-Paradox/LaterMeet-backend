@@ -9,3 +9,5 @@ connection_string = f"mongodb+srv://{MONGO_USERNAME}:{MONGO_PASSWORD}@cluster0.j
 CLIENT = MongoClient(connection_string, connect=False)
 
 USER = CLIENT["User"]
+
+MEETINGS = CLIENT["Meetings"]
