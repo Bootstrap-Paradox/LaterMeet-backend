@@ -118,3 +118,6 @@ class Operations():
         return COLLECTION_REF.delete_one(
             query
         )
+
+    def __create_blueprint(self):
+        pass

@@ -22,3 +22,16 @@ class Meetings(Operations):
             NotFound(f"Meeting with {str(self.meeting_id)} Not Found")
 
         return meeting_doc
+
+    def create_meeting(self, meeting_data: dict):
+        pass
+
+    def __create_blueprint(self, meeting_data: dict = None) -> dict:
+        return {
+            "meeting_name": meeting_data.get("meeting_name", ""),
+            "meeting_description": meeting_data.get("meeting_description", ""),
+            "meeting_url": meeting_data.get("meeting_url", None),
+            "meeting_recursive": meeting_data.get("meeting_recursive", False),
+            "meeting_hosts": [],
+            "meeting_speakers": []
+        }
