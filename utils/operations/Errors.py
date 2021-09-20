@@ -8,5 +8,21 @@ class NotFound(Error):
         self.message = message
         super(NotFound, self).__init__(self.message)
 
-    def __str__(self):
+    def __str__(self) -> str:
+        return self.message
+
+
+class NotAllowed(Error):
+    def __init__(self, message: str = "Not Allowed") -> None:
+        self.message = message
+
+    def __str__(self) -> str:
+        return self.message
+
+
+class Restricted(Error):
+    def __init__(self, message: str = "Restricted") -> None:
+        self.message = message
+
+    def __str__(self) -> str:
         return self.message

@@ -1,5 +1,5 @@
 from pymongo import results
-from pymongo.results import InsertOneResult, InsertManyResult
+from pymongo.results import DeleteResult, InsertOneResult, InsertManyResult
 from BusinessInteraction import USER, MEETINGS
 from pymongo.collection import Collection
 from typing import Union
@@ -111,7 +111,7 @@ class Operations():
             session=session
         )
 
-    def delete(self, COLLECTION_REF: Collection = None, query: dict = None, all_instances=False):
+    def delete(self, COLLECTION_REF: Collection = None, query: dict = None, all_instances=False) -> DeleteResult:
 
         if all_instances:
             return COLLECTION_REF.delete_many(

@@ -1,3 +1,4 @@
+from re import M
 from utils.utility.utility import safe
 from utils.operations.meetings import Meetings
 from django.shortcuts import render
@@ -37,7 +38,7 @@ class MeetingQuaters(APIView):
 
             return Response(
                 safe(meeting_doc),
-                status=status.HTTP_200_OK
+                status=status.HTTP_302_FOUND
             )
 
         except Exception as e:
@@ -76,4 +77,19 @@ class MeetingQuaters(APIView):
             return Response(
                 {"msg": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            )
+
+    def delete(self, request, meeting_id=None, format=None):
+
+        try:
+            Meetings(meeting_id=meeting_id).delete_meeting()
+            return Response(
+                {"msg": "true"},
+                status=status.HTTP_202_ACCEPTED
+            )
+
+        except Exception as e:
+            return Response(
+                {"msg": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )

@@ -1,4 +1,4 @@
-from utils.operations.Errors import NotFound
+from utils.operations.Errors import NotAllowed, NotFound
 from . import Operations
 from bson.objectid import ObjectId
 from datetime import datetime, timedelta
@@ -58,8 +58,23 @@ class Meetings(Operations):
                 "$set":
                 updated_meeting_data
             }
-        )) == 0:
+        )).modified_count == 0:
             raise NotFound(f"Meeting with {self.meeting_id} Not Found")
+
+        return True
+
+    def delete_meeting(self):
+        # TODO: Authenticate User Before Operation
+
+        if not self.meeting_id:
+            raise NotAllowed("Operation Requires Id")
+        if self.delete(
+            self.MEETINGS_REF,
+            {
+                "_id": self.meeting_id
+            }
+        ).deleted_count == 0:
+            raise NotFound("Document with Id Not Found")
 
         return True
 
