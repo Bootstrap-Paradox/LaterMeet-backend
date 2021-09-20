@@ -45,7 +45,7 @@ class MeetingQuaters(APIView):
 
             return Response(
                 safe(meeting_doc),
-                status=status.HTTP_302_FOUND
+                status=status.HTTP_200_OK
             )
 
         except NotFound as e:
