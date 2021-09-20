@@ -1,7 +1,6 @@
 from utils.operations.Errors import NotFound
 from utils.utility.utility import safe
 from utils.operations.meetings import Meetings
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
