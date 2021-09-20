@@ -1,4 +1,3 @@
-from re import M
 from utils.operations.Errors import NotFound
 from utils.utility.utility import safe
 from utils.operations.meetings import Meetings
