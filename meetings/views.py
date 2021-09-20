@@ -1,3 +1,5 @@
+from utils.utility.utility import safe
+from utils.operations.meetings import Meetings
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -8,7 +10,7 @@ from datetime import datetime
 # Create your views here.
 
 
-class Meetings(APIView):
+class MeetingsEndpoint(APIView):
 
     def get(self, request, meeting_id=None, format=None):
         timing = time.mktime(datetime.utcnow().timetuple()) * 1000
@@ -16,3 +18,22 @@ class Meetings(APIView):
             {},
             status=status.HTTP_200_OK,
         )
+
+
+class MeetingQuaters(APIView):
+
+    def post(self, request, format=None):
+
+        try:
+            new_meeting: dict = Meetings().create_meeting(request.data)
+
+            return Response(
+                safe(new_meeting),
+                status=status.HTTP_201_CREATED
+            )
+
+        except Exception as e:
+            return Response(
+                {"msg": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

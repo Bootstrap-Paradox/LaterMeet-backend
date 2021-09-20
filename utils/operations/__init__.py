@@ -1,5 +1,8 @@
+from pymongo import results
+from pymongo.results import InsertOneResult, InsertManyResult
 from BusinessInteraction import USER, MEETINGS
 from pymongo.collection import Collection
+from typing import Union
 
 
 class Operations():
@@ -30,7 +33,7 @@ class Operations():
 
     # Mongo Funtionlity
 
-    def insert(self, COLLECTION_REF: Collection, document, ordered=True, bypass_document_validation=False, session=None):
+    def insert(self, COLLECTION_REF: Collection, document, ordered=True, bypass_document_validation=False, session=None) -> Union[InsertManyResult, InsertOneResult]:
         if isinstance(document, list):
             return COLLECTION_REF.insert_many(document, ordered=ordered, bypass_document_validation=bypass_document_validation, session=session)
         return COLLECTION_REF.insert_one(document, bypass_document_validation=bypass_document_validation, session=session)
