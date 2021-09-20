@@ -2,7 +2,7 @@
 
 Backend for Business Tool to Allow Viewing Recorded Meetings
 
-</br>
+<br>
 
 ---
 
@@ -13,3 +13,19 @@ Backend for Business Tool to Allow Viewing Recorded Meetings
 * Edit Meeting
 * Mail Prior Meeting
 * Make Money off MVP
+
+<br>
+
+---
+
+# Development Cycle (MVP)
+
+* ~~New Meeting~~
+* ~~View Meeting~~
+* ~~Edit Meeting~~
+* ~~Delete Meeting~~
+* ~~Join Meeting~~
+* User Authentication
+* Database Update 
+  * Mail Database
+  * Timings Database
