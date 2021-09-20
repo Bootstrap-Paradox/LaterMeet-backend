@@ -29,6 +29,18 @@ class MeetingsEndpoint(APIView):
 
 class MeetingQuaters(APIView):
 
+    def get(self, request, meeting_id=None):
+        # TODO: Fetch Meeting from User id if Meeting Id not present
+
+        try:
+            pass
+
+        except Exception as e:
+            return Response(
+                {"msg": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
     def post(self, request, format=None):
 
         try:
@@ -43,4 +55,20 @@ class MeetingQuaters(APIView):
             return Response(
                 {"msg": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
+    def put(self, request, meeting_id=None, format=None):
+
+        try:
+            meeting_data = Meetings(
+                meeting_id=meeting_id).update_meeting(request.data)
+            return Response(
+                {"msg": str(meeting_data)},
+                status=status.HTTP_202_ACCEPTED
+            )
+
+        except Exception as e:
+            return Response(
+                {"msg": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )

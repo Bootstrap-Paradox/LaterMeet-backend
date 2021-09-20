@@ -31,6 +31,21 @@ class Meetings(Operations):
         # TODO: Add inserted_id to user database
         return {"meeting_id": inserted_meeting.inserted_id}
 
+    def update_meeting(self, updated_meeting_data: dict) -> bool:
+        # TODO: Check User Authenticity
+        if (updated_data := self.update(
+            self.MEETINGS_REF,
+            {
+                "_id": self.meeting_id,
+            },
+            {
+                "$set": updated_meeting_data
+            }
+        )) == 0:
+            raise NotFound(f"Meeting with {self.meeting_id} Not Found")
+
+        return True
+
     def __create_blueprint(self, meeting_data: dict = None) -> dict:
         """
         meeting_timmings: [
