@@ -1,4 +1,5 @@
 from re import M
+from utils.operations.Errors import NotFound
 from utils.utility.utility import safe
 from utils.operations.meetings import Meetings
 from django.shortcuts import render
@@ -21,6 +22,12 @@ class MeetingsEndpoint(APIView):
                 safe({**meeting_document}),
                 status=status.HTTP_200_OK,
             )
+
+        except NotFound as e:
+            return Response(
+                {"msg": str(e)},
+                status=status.HTTP_404_NOT_FOUND,
+            )
         except Exception as e:
             return Response(
                 {"msg": str(e)},
@@ -39,6 +46,12 @@ class MeetingQuaters(APIView):
             return Response(
                 safe(meeting_doc),
                 status=status.HTTP_302_FOUND
+            )
+
+        except NotFound as e:
+            return Response(
+                {"msg": str(e)},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
         except Exception as e:
