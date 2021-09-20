@@ -43,13 +43,12 @@ class Meetings(Operations):
             "view_once": meeting_data.get("meeting_view_once", False),
             "allowed_viewers": meeting_data.get("meeting_allowed_viewers", []),
         }"""
+        # "meeting_recursive": meeting_data.get("meeting_recursive", False),
         return {
             "meeting_name": meeting_data.get("meeting_name", ""),
             "meeting_description": meeting_data.get("meeting_description", ""),
             "meeting_url": meeting_data.get("meeting_url", None),
-            "meeting_recursive": meeting_data.get("meeting_recursive", False),
             "meeting_hosts": [],
             "meeting_speakers": [],
-            "meeting_timings": []
-
+            "meeting_timings": [],
         }
