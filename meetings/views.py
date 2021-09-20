@@ -15,7 +15,7 @@ class MeetingsEndpoint(APIView):
     def get(self, request, meeting_id=None, format=None):
         try:
             timing = time.mktime(datetime.utcnow().timetuple()) * 1000
-            meeting_document = Meetings(meeting_id=meeting_id).fetch_meeting()
+            meeting_document = Meetings(meeting_id=meeting_id).join_meeting()
             return Response(
                 safe({**meeting_document}),
                 status=status.HTTP_200_OK,
@@ -33,7 +33,12 @@ class MeetingQuaters(APIView):
         # TODO: Fetch Meeting from User id if Meeting Id not present
 
         try:
-            pass
+            meeting_doc: dict = Meetings(meeting_id=meeting_id).fetch_meeting()
+
+            return Response(
+                safe(meeting_doc),
+                status=status.HTTP_200_OK
+            )
 
         except Exception as e:
             return Response(

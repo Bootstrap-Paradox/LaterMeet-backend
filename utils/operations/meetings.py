@@ -11,7 +11,7 @@ class Meetings(Operations):
         super(Meetings, self).__init__(*args, **kwargs)
         self.meeting_id = meeting_id and ObjectId(meeting_id)
 
-    def fetch_meeting(self):
+    def join_meeting(self):
         # TODO: Time Check with Request Timezone
         if not (meeting_doc := self.find(
             self.MEETINGS_REF,
@@ -19,7 +19,7 @@ class Meetings(Operations):
                 "_id": self.meeting_id
             }
         )):
-            NotFound(f"Meeting with {str(self.meeting_id)} Not Found")
+            raise NotFound(f"Meeting with {str(self.meeting_id)} Not Found")
 
         return meeting_doc
 
@@ -31,6 +31,22 @@ class Meetings(Operations):
         # TODO: Add inserted_id to user database
         return {"meeting_id": inserted_meeting.inserted_id}
 
+    def fetch_meeting(self) -> dict:
+        if (self.meeting_id):
+
+            if not (meeting_doc := self.find(
+                self.MEETINGS_REF,
+                {
+                    "_id": self.meeting_id,
+                }
+            )):
+                raise NotFound("Meeting Does Not Exist")
+
+        else:
+            pass
+
+        return {**meeting_doc}
+
     def update_meeting(self, updated_meeting_data: dict) -> bool:
         # TODO: Check User Authenticity
         if (updated_data := self.update(
@@ -39,7 +55,8 @@ class Meetings(Operations):
                 "_id": self.meeting_id,
             },
             {
-                "$set": updated_meeting_data
+                "$set":
+                updated_meeting_data
             }
         )) == 0:
             raise NotFound(f"Meeting with {self.meeting_id} Not Found")
