@@ -13,11 +13,18 @@ from datetime import datetime
 class MeetingsEndpoint(APIView):
 
     def get(self, request, meeting_id=None, format=None):
-        timing = time.mktime(datetime.utcnow().timetuple()) * 1000
-        return Response(
-            {},
-            status=status.HTTP_200_OK,
-        )
+        try:
+            timing = time.mktime(datetime.utcnow().timetuple()) * 1000
+            meeting_document = Meetings(meeting_id=meeting_id).fetch_meeting()
+            return Response(
+                safe({**meeting_document}),
+                status=status.HTTP_200_OK,
+            )
+        except Exception as e:
+            return Response(
+                {"msg": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
 
 class MeetingQuaters(APIView):

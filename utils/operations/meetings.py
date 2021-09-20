@@ -38,7 +38,11 @@ class Meetings(Operations):
                 start_time: datetime(),
             }
         ]
-        """
+
+        "meeting_meta_data": {
+            "view_once": meeting_data.get("meeting_view_once", False),
+            "allowed_viewers": meeting_data.get("meeting_allowed_viewers", []),
+        }"""
         return {
             "meeting_name": meeting_data.get("meeting_name", ""),
             "meeting_description": meeting_data.get("meeting_description", ""),
@@ -46,8 +50,6 @@ class Meetings(Operations):
             "meeting_recursive": meeting_data.get("meeting_recursive", False),
             "meeting_hosts": [],
             "meeting_speakers": [],
-            "meeting_meta_data": {
-                "view_once": meeting_data.get("meeting_view_once", False),
-                "allowed_viewers": meeting_data.get("meeting_allowed_viewers", []),
-            }
+            "meeting_timings": []
+
         }
