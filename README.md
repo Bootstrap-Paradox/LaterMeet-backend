@@ -25,7 +25,8 @@ Backend for Business Tool to Allow Viewing Recorded Meetings
 * ~~Edit Meeting~~
 * ~~Delete Meeting~~
 * ~~Join Meeting~~
-* User Authentication
+* ~~User Authentication~~
+* Authenticate Meetings
 * Database Update 
   * Mail Database
   * Timings Database
