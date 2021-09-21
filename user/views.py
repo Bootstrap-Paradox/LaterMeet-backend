@@ -1,6 +1,6 @@
-from django.shortcuts import render
+from utils.utility.mail import MailAuthenticateUser
 
-from utils.authentication.Errors import NotAllowed
+from utils.operations.Errors import NotAllowed
 from utils.authentication.Errors import *
 from .models import User
 from rest_framework.views import APIView
@@ -31,3 +31,42 @@ class Login(APIView):
 
         except AuthenticationError as e:
             return Response({"message": str(e)}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+class Signup(APIView):
+
+    def post(self, request, format=None):
+
+        try:
+            code = User().create_code(request.data)
+            MailAuthenticateUser().mail(
+                subject="Authentication Code",
+                html_template_data=(
+                    "user/code_authentication.html", {"code": code}),
+                from_email="pyrabrain@gmail.com",
+                to=[request.data["email"]]
+            )
+            return Response({"message": "Code Successful Sent"}, status=status.HTTP_201_CREATED)
+
+        except UserAlreadyExistError:
+            return Response({"message": "User Already Exists"}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            traceback.print_exc()
+
+            return Response({"message": "Action Failed"}, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, format=None):
+        try:
+            if code_authenticated := User().auth(request.data["code"]):
+                return Response(
+                    {**code_authenticated},
+                    status=status.HTTP_200_OK
+                )
+            raise NotAllowed("Code Incorrect")
+
+        except Exception as e:
+            traceback.print_exc()
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
