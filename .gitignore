@@ -5,6 +5,8 @@ __pycache__
 .vscode/*
 !.vscode/settings.json
 
+/*.sqlite3
+
 # Mac Specific
 
 .DS_Store
