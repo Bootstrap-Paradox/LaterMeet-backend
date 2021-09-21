@@ -2,8 +2,7 @@ __pycache__
 
 *.pyc
 
-.vscode/*
-!.vscode/settings.json
+.vscode
 
 /*.sqlite3
 
