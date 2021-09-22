@@ -1,5 +1,5 @@
 from utils.operations.Errors import NotFound
-from utils.utility.utility import safe
+from utils.utility.utility import authenticate_token, safe
 from utils.operations.meetings import Meetings
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -35,11 +35,13 @@ class MeetingsEndpoint(APIView):
 
 class MeetingQuaters(APIView):
 
-    def get(self, request, meeting_id=None):
+    @authenticate_token
+    def get(self, request, decoded_data, meeting_id=None):
         # TODO: Fetch Meeting from User id if Meeting Id not present
 
         try:
-            meeting_doc: dict = Meetings(meeting_id=meeting_id).fetch_meeting()
+            meeting_doc: dict = Meetings(
+                meeting_id=meeting_id, user_id=decoded_data["user_id"]).fetch_meeting()
 
             return Response(
                 safe(meeting_doc),
@@ -58,10 +60,12 @@ class MeetingQuaters(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-    def post(self, request, format=None):
+    @authenticate_token
+    def post(self, request, decoded_data, format=None):
 
         try:
-            new_meeting: dict = Meetings().create_meeting(request.data)
+            new_meeting: dict = Meetings(
+                user_id=decoded_data["user_id"]).create_meeting(request.data)
 
             return Response(
                 safe(new_meeting),
@@ -74,10 +78,12 @@ class MeetingQuaters(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
             )
 
-    def put(self, request, meeting_id=None, format=None):
+    @authenticate_token
+    def put(self, request, decoded_data, meeting_id=None, format=None):
 
         try:
             meeting_data = Meetings(
+                user_id=decoded_data["user_id"],
                 meeting_id=meeting_id).update_meeting(request.data)
             return Response(
                 {"msg": str(meeting_data)},
@@ -90,10 +96,12 @@ class MeetingQuaters(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
-    def delete(self, request, meeting_id=None, format=None):
+    @authenticate_token
+    def delete(self, request, decoded_data, meeting_id=None, format=None):
 
         try:
-            Meetings(meeting_id=meeting_id).delete_meeting()
+            Meetings(meeting_id=meeting_id,
+                     user_id=decoded_data["user_id"]).delete_meeting()
             return Response(
                 {"msg": "true"},
                 status=status.HTTP_202_ACCEPTED

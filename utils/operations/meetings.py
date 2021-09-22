@@ -7,9 +7,26 @@ import time
 
 class Meetings(Operations):
 
-    def __init__(self, meeting_id=None, *args, **kwargs):
+    def __init__(self, *args, **kwargs):
         super(Meetings, self).__init__(*args, **kwargs)
-        self.meeting_id = meeting_id and ObjectId(meeting_id)
+
+    @staticmethod
+    def find_cloest(timings: list = None):
+        # TODO: type Check for list
+        if timings:
+            current_time = datetime.utcnow()
+            cloest_diff = abs(timings[0] - current_time)
+            cloest_index = 0
+            index = 0
+            for timing in timings:
+                if (diff := abs(timing - current_time)) < cloest_diff:
+                    cloest_diff = diff
+                    cloest_index = index
+                index += 1
+
+            return time.mktime(timings[cloest_index].timetuple()) * 1000
+
+        return None
 
     def join_meeting(self):
         # TODO: Time Check with Request Timezone
@@ -21,17 +38,36 @@ class Meetings(Operations):
         )):
             raise NotFound(f"Meeting with {str(self.meeting_id)} Not Found")
 
+        meeting_doc["meeting_start_time"] = self.find_cloest(
+            meeting_doc["meeting_timings"]) or time.mktime(datetime.utcnow().timetuple()) * 1000
+
+        del meeting_doc["meeting_timings"]
+
         return meeting_doc
 
-    def create_meeting(self, meeting_data: dict) -> dict:
+    @Operations.verify_user
+    def create_meeting(self, user_info, meeting_data: dict) -> dict:
         # Create Meeting
         inserted_meeting = self.insert(
             self.MEETINGS_REF, self.__create_blueprint(meeting_data))
 
+        self.update(
+            self.USER_REF,
+            {
+                "_id": self.user_id,
+            },
+            {
+                "$addToSet": {
+                    "meeting_ids": inserted_meeting.inserted_id,
+                }
+            }
+        )
+
         # TODO: Add inserted_id to user database
         return {"meeting_id": inserted_meeting.inserted_id}
 
-    def fetch_meeting(self) -> dict:
+    @Operations.verify_request
+    def fetch_meeting(self, user_info) -> dict:
         if (self.meeting_id):
 
             if not (meeting_doc := self.find(
@@ -47,7 +83,8 @@ class Meetings(Operations):
 
         return {**meeting_doc}
 
-    def update_meeting(self, updated_meeting_data: dict) -> bool:
+    @Operations.verify_request
+    def update_meeting(self, user_info, updated_meeting_data: dict) -> bool:
         # TODO: Check User Authenticity
         if (updated_data := self.update(
             self.MEETINGS_REF,
@@ -63,7 +100,8 @@ class Meetings(Operations):
 
         return True
 
-    def delete_meeting(self):
+    @Operations.verify_request
+    def delete_meeting(self, user_info: dict) -> bool:
         # TODO: Authenticate User Before Operation
 
         if not self.meeting_id:
@@ -78,7 +116,7 @@ class Meetings(Operations):
 
         return True
 
-    def __create_blueprint(self, meeting_data: dict = None) -> dict:
+    def __create_blueprint(self, meeting_data: dict = None, host_name="") -> dict:
         """
         meeting_timmings: [
             {
@@ -95,7 +133,7 @@ class Meetings(Operations):
             "meeting_name": meeting_data.get("meeting_name", ""),
             "meeting_description": meeting_data.get("meeting_description", ""),
             "meeting_url": meeting_data.get("meeting_url", None),
-            "meeting_hosts": [],
+            "meeting_hosts": [{"_id": self.user_id, "name": host_name, "owner": True}],
             "meeting_speakers": [],
             "meeting_timings": [],
         }

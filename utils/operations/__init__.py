@@ -1,8 +1,11 @@
+from utils.operations.Errors import Error, NotAllowed, Restricted
+from bson.objectid import ObjectId
 from pymongo import results
 from pymongo.results import DeleteResult, InsertOneResult, InsertManyResult
 from BusinessInteraction import USER, MEETINGS
 from pymongo.collection import Collection
 from typing import Union
+from functools import wraps
 
 
 class Operations():
@@ -13,9 +16,9 @@ class Operations():
     # Meetings Collection
     __MEETINGS_REF = MEETINGS["meetings"]
 
-    def __init__(self):
-
-        pass
+    def __init__(self, user_id=None, meeting_id=None):
+        self.user_id = user_id and ObjectId(user_id)
+        self.meeting_id = meeting_id and ObjectId(meeting_id)
 
     # Properties
 
@@ -30,6 +33,43 @@ class Operations():
     @property
     def MEETINGS_REF(self):
         return self.__MEETINGS_REF
+
+    # Decorators
+
+    @staticmethod
+    def verify_request(func):
+
+        @wraps(func)
+        def wrapper(self: Operations, *args, **kwargs):
+            if not (user_info := self.find(
+                self.USER_REF,
+                {
+                    "_id": self.user_id,
+                    "meeting_ids": {
+                        "$in": [self.meeting_id]
+                    }
+                },
+            )):
+                raise Restricted("Request Not Associated with Meeting")
+            return func(self, user_info, *args, **kwargs)
+
+        return wrapper
+
+    @staticmethod
+    def verify_user(func):
+        @wraps(func)
+        def wrapper(self: Operations, *args, **kwargs):
+            if not (user_info := self.find(
+                self.USER_REF,
+                {
+                    "_id": self.user_id,
+                }
+            )):
+                raise NotAllowed("User Not Found")
+
+            return func(self, user_info, *args, **kwargs)
+
+        return wrapper
 
     # Mongo Funtionlity
 
