@@ -3,6 +3,7 @@ from . import Operations
 from bson.objectid import ObjectId
 from datetime import datetime, timedelta
 import time
+from pymongo.cursor import Cursor
 
 
 class Meetings(Operations):
@@ -69,17 +70,29 @@ class Meetings(Operations):
     # @Operations.verify_request
     def fetch_meeting(self,) -> dict:
         response_data = {}
+
+        def fetch_name(data): return [
+            name["name"] for name in meeting_doc["meeting_hosts"] if name["_id"] == self.user_id][0] if not isinstance(data, Cursor) else [
+                name["name"] for name in meeting_doc[0]["meeting_hosts"] if name["_id"] == self.user_id][0]
+
         if (self.meeting_id):
 
             if not (meeting_doc := self.find(
                 self.MEETINGS_REF,
                 {
                     "_id": self.meeting_id,
+                    "meeting_hosts": {
+                        "$elemMatch": {
+                            "_id": self.user_id
+                        }
+                    }
                 }
             )):
                 raise NotFound("Meeting Does Not Exist")
 
             response_data["meeting_data"] = meeting_doc
+
+            response_data["request_name"] = fetch_name(meeting_doc)
 
         else:
             if not (meeting_doc := self.find(
@@ -95,6 +108,7 @@ class Meetings(Operations):
             )):
                 raise NotFound("Meetings not Found")
             response_data["meetings"] = meeting_doc
+            response_data["request_name"] = fetch_name(meeting_doc)
 
         return {**response_data}
 
