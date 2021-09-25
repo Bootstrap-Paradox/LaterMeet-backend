@@ -49,7 +49,7 @@ class Meetings(Operations):
     def create_meeting(self, user_info, meeting_data: dict) -> dict:
         # Create Meeting
         inserted_meeting = self.insert(
-            self.MEETINGS_REF, self.__create_blueprint(meeting_data))
+            self.MEETINGS_REF, self.__create_blueprint(meeting_data, host_name=f"{user_info['firstName']} {user_info['lastName']}"))
 
         self.update(
             self.USER_REF,
@@ -66,8 +66,9 @@ class Meetings(Operations):
         # TODO: Add inserted_id to user database
         return {"meeting_id": inserted_meeting.inserted_id}
 
-    @Operations.verify_request
-    def fetch_meeting(self, user_info) -> dict:
+    # @Operations.verify_request
+    def fetch_meeting(self,) -> dict:
+        response_data = {}
         if (self.meeting_id):
 
             if not (meeting_doc := self.find(
@@ -78,10 +79,25 @@ class Meetings(Operations):
             )):
                 raise NotFound("Meeting Does Not Exist")
 
-        else:
-            pass
+            response_data["meeting_data"] = meeting_doc
 
-        return {**meeting_doc}
+        else:
+            if not (meeting_doc := self.find(
+                self.MEETINGS_REF,
+                {
+                    "meeting_hosts": {
+                        "$elemMatch": {
+                            "_id": self.user_id
+                        }
+                    }
+                },
+                all_instance=True
+            )):
+                raise NotFound("Meetings not Found")
+            response_data["meeting_data"] = meeting_doc[0]
+            response_data["meetings"] = meeting_doc
+
+        return {**response_data}
 
     @Operations.verify_request
     def update_meeting(self, user_info, updated_meeting_data: dict) -> bool:

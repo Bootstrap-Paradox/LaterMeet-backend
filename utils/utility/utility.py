@@ -6,6 +6,7 @@ import jwt
 from rest_framework.response import Response
 from rest_framework import status
 import os
+from pymongo.cursor import Cursor
 
 
 def safe(data: dict) -> dict:
@@ -23,6 +24,9 @@ class JSONEncoder(json.JSONEncoder):
 
         if isinstance(o, uuid.UUID):
             return str(o)
+
+        if isinstance(o, Cursor):
+            return list(o)
 
         return json.JSONEncoder.default(self, o)
 
