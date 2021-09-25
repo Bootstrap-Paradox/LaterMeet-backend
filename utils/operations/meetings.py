@@ -94,7 +94,6 @@ class Meetings(Operations):
                 all_instance=True
             )):
                 raise NotFound("Meetings not Found")
-            response_data["meeting_data"] = meeting_doc[0]
             response_data["meetings"] = meeting_doc
 
         return {**response_data}
