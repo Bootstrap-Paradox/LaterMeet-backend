@@ -1,3 +1,4 @@
+import traceback
 from utils.operations.Errors import NotFound
 from utils.utility.utility import authenticate_token, safe
 from utils.operations.meetings import Meetings
@@ -55,6 +56,7 @@ class MeetingQuaters(APIView):
             )
 
         except Exception as e:
+            traceback.print_exc()
             return Response(
                 {"msg": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -82,6 +84,10 @@ class MeetingQuaters(APIView):
     def put(self, request, decoded_data, meeting_id=None, format=None):
 
         try:
+            print(request.data)
+            # Deleting the _id field
+            del request.data["_id"]
+
             meeting_data = Meetings(
                 user_id=decoded_data["user_id"],
                 meeting_id=meeting_id).update_meeting(request.data)
@@ -91,6 +97,7 @@ class MeetingQuaters(APIView):
             )
 
         except Exception as e:
+            traceback.print_exc()
             return Response(
                 {"msg": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,

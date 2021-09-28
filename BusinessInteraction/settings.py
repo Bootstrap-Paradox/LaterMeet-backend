@@ -29,7 +29,7 @@ DEBUG = True
 # Access without https
 CSRF_COOKIE_SECURE = False
 
-ALLOWED_HOSTS = ["0.0.0.0", "192.168.43.83", "localhost"]
+ALLOWED_HOSTS = ["0.0.0.0", "192.168.43.83", "192.168.1.100", "localhost"]
 
 # Allowing Apis to Access endpoints
 CORS_ORIGIN_ALLOW_ALL = True

@@ -71,9 +71,11 @@ class Meetings(Operations):
     def fetch_meeting(self,) -> dict:
         response_data = {}
 
-        def fetch_name(data): return [
-            name["name"] for name in meeting_doc["meeting_hosts"] if name["_id"] == self.user_id][0] if not isinstance(data, Cursor) else [
-                name["name"] for name in meeting_doc[0]["meeting_hosts"] if name["_id"] == self.user_id][0]
+        def fetch_name(data):
+            print(type(data))
+            return [
+                host["name"] for host in meeting_doc["meeting_hosts"] if str(host["_id"]) == str(self.user_id)][0] if not isinstance(data, Cursor) else [
+                host["name"] for host in meeting_doc[0]["meeting_hosts"] if str(host["_id"]) == str(self.user_id)][0]
 
         if (self.meeting_id):
 
