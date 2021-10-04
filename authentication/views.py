@@ -42,7 +42,7 @@ class Signup(APIView):
             MailAuthenticateUser().mail(
                 subject="Authentication Code",
                 html_template_data=(
-                    "user/code_authentication.html", {"code": code}),
+                    "authentication/code_authentication.html", {"code": code}),
                 from_email="pyrabrain@gmail.com",
                 to=[request.data["email"]]
             )
