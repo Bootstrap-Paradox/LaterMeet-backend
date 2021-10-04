@@ -31,10 +31,14 @@ class Meetings(Operations):
 
     def join_meeting(self):
         # TODO: Time Check with Request Timezone
-        if not (meeting_doc := self.find(
-            self.MEETINGS_REF,
+        if not (meeting_doc := self.MEETINGS_REF.find_one_and_update(
             {
-                "_id": self.meeting_id
+                "_id": self.meeting_id,
+            },
+            {
+                "$inc": {
+                    "meeting_views": 1,
+                }
             }
         )):
             raise NotFound(f"Meeting with {str(self.meeting_id)} Not Found")
@@ -167,4 +171,5 @@ class Meetings(Operations):
             "meeting_hosts": [{"_id": self.user_id, "name": host_name, "owner": True}],
             "meeting_speakers": [],
             "meeting_timings": [],
+            "meeting_views": 0,
         }
