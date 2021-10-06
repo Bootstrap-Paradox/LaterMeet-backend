@@ -1,6 +1,6 @@
 from utils.utility.mail import MailAuthenticateUser
 
-from utils.operations.Errors import NotAllowed
+from utils.operations.Errors import NotAllowed, Restricted
 from utils.authentication.Errors import *
 from .models import User
 from rest_framework.views import APIView
@@ -63,6 +63,18 @@ class Signup(APIView):
                     status=status.HTTP_200_OK
                 )
             raise NotAllowed("Code Incorrect")
+
+        except NotAllowed as e:
+            return (Response(
+                {"error": str(e)},
+                status=status.HTTP_204_NO_CONTENT,
+            ))
+
+        except Restricted as e:
+            return Response(
+                {"error": str(e)},
+                status=status.HTTP_204_NO_CONTENT,
+            )
 
         except Exception as e:
             traceback.print_exc()
