@@ -101,7 +101,7 @@ class Meetings(Operations):
             response_data["request_name"] = fetch_name(meeting_doc)
 
         else:
-            if not (meeting_doc := self.find(
+            if not list(meeting_doc := self.find(
                 self.MEETINGS_REF,
                 {
                     "meeting_hosts": {
@@ -112,6 +112,7 @@ class Meetings(Operations):
                 },
                 all_instance=True
             )):
+
                 raise NotFound("Meetings not Found")
             response_data["meetings"] = meeting_doc
             response_data["request_name"] = fetch_name(meeting_doc)
