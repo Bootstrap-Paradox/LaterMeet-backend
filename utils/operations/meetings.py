@@ -72,13 +72,14 @@ class Meetings(Operations):
         return {"meeting_id": inserted_meeting.inserted_id}
 
     # @Operations.verify_request
-    def fetch_meeting(self,) -> dict:
+    def fetch_meeting(self) -> dict:
         response_data = {}
 
-        def fetch_name(data):
-            print(type(data))
+        def fetch_name(meeting_doc):
+            if meeting_doc.count() == 0:
+                raise NotFound("Meetings Not Found")
             return [
-                host["name"] for host in meeting_doc["meeting_hosts"] if str(host["_id"]) == str(self.user_id)][0] if not isinstance(data, Cursor) else [
+                host["name"] for host in meeting_doc["meeting_hosts"] if str(host["_id"]) == str(self.user_id)][0] if not isinstance(meeting_doc, Cursor) else [
                 host["name"] for host in meeting_doc[0]["meeting_hosts"] if str(host["_id"]) == str(self.user_id)][0]
 
         if (self.meeting_id):
@@ -101,7 +102,7 @@ class Meetings(Operations):
             response_data["request_name"] = fetch_name(meeting_doc)
 
         else:
-            if not list(meeting_doc := self.find(
+            if not (meeting_doc := self.find(
                 self.MEETINGS_REF,
                 {
                     "meeting_hosts": {
