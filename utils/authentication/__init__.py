@@ -64,4 +64,12 @@ class User(Operations):
         ).deleted_count == 0:
             raise NotFound("User Could Not be deleted")
 
+        if self.delete(
+            self.AUTH_REF,
+            {
+                "user_id": self.user_id
+            }
+        ).deleted_count == 0:
+            raise NotFound("User Credentials Could not be deleted")
+
         return True

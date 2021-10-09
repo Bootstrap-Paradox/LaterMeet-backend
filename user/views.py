@@ -4,6 +4,7 @@ from rest_framework import status
 from rest_framework.views import APIView
 
 from utils.authentication import User
+from utils.operations.Errors import NotAllowed
 from utils.utility.utility import safe
 from utils.utility.utility import authenticate_token
 
@@ -33,13 +34,41 @@ class UserEndpoint(APIView):
             )
 
     @authenticate_token
-    def post(self, request, decoded_data, format=None):
-        pass
-
-    @authenticate_token
     def put(self, request, decoded_data, format=None):
-        pass
+        try:
+            if not User(user_id=decoded_data["user_id"]).update_personal_information(request.data):
+                pass
+
+            return Response(
+                {},
+                status=status.HTTP_202_ACCEPTED,
+            )
+
+        except Exception as e:
+            return Response(
+                {
+                    "msg": str(e),
+                },
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
 
     @authenticate_token
     def delete(self, request, decoded_data, user_id=None, format=None):
-        pass
+
+        try:
+            # if decoded_data["user_id"] != user_id:
+            #     raise NotAllowed("User Ids don't match")
+
+            if not User(user_id=decoded_data["user_id"]).delete_account():
+                pass
+
+            return Response(
+                {},
+                status=status.HTTP_202_ACCEPTED
+            )
+
+        except Exception as e:
+            return Response(
+                {"msg": str(e)},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
