@@ -38,6 +38,9 @@ class User(Operations):
         if "meeting_ids" in update_data:
             del update_data["meeting_ids"]
 
+        if "_id" in update_data:
+            del update_data["_id"]
+
         if self.update(
             self.USER_REF,
             {
