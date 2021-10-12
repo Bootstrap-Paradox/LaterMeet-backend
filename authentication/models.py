@@ -1,7 +1,7 @@
 
 from django.db import models
 import random
-from datetime import datetime, timedelta
+from datetime import timedelta
 from utils.operations.Errors import *
 from utils.authentication.Errors import *
 from django.utils.timezone import now
@@ -17,9 +17,9 @@ class User(models.Model):
         default="", editable=False, blank=False, null=False, max_length=250)
     code = models.CharField(default="", max_length=6, blank=False, null=False)
     create_on = models.DateTimeField(
-        default=datetime.utcnow, blank=False, editable=False)
+        default=now, blank=False, editable=False)
     expires_on = models.DateTimeField(
-        default=datetime.utcnow() + timedelta(minutes=5)
+        default=now() + timedelta(minutes=5)
     )
 
     def create_code(self, user_cred):
