@@ -21,15 +21,18 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure--pldg9twutn34ac^g6a9qcj1cgfyr_-=xjasp)jmdco+6l)aqv'
+SECRET_KEY = os.environ["LATERMEET_DJANGO_SECRET"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 # Access without https
-CSRF_COOKIE_SECURE = False
+CSRF_COOKIE_SECURE = True
 
-ALLOWED_HOSTS = ["0.0.0.0", "192.168.43.83", "192.168.1.100", "localhost"]
+SESSION_COOKIE_SECURE = True
+
+# ALLOWED_HOSTS = ["0.0.0.0", "192.168.43.83", "192.168.1.100", "localhost"]
+ALLOWED_HOSTS = ["www.latermeet.com", "latermeet.com", "64.227.176.48"]
 
 # Allowing Apis to Access endpoints
 CORS_ORIGIN_ALLOW_ALL = True
@@ -56,6 +59,7 @@ INSTALLED_APPS = [
     'main.apps.MainConfig',
     'user.apps.UserConfig',
     'authentication.apps.AuthenticationConfig',
+    'meetings.apps.MeetingsConfig',
 ]
 
 MIDDLEWARE = [

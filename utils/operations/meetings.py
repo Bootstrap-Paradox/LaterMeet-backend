@@ -78,9 +78,26 @@ class Meetings(Operations):
         def fetch_name(meeting_doc):
             if meeting_doc.count() == 0:
                 raise NotFound("Meetings Not Found")
-            return [
+            if (name_from_meeting := [
                 host["name"] for host in meeting_doc["meeting_hosts"] if str(host["_id"]) == str(self.user_id)][0] if not isinstance(meeting_doc, Cursor) else [
-                host["name"] for host in meeting_doc[0]["meeting_hosts"] if str(host["_id"]) == str(self.user_id)][0]
+                    host["name"] for host in meeting_doc[0]["meeting_hosts"] if str(host["_id"]) == str(self.user_id)][0]) != "":
+
+                return name_from_meeting
+
+            user_doc = self.find(
+                self.USER_REF,
+                {
+                    "_id": self.user_id,
+                },
+                {
+                    "firstName": 1,
+                    "lastName": 1,
+                    "_id": 0,
+                }
+            )
+            print(user_doc)
+
+            return f"{user_doc.get('firstName', '')} {user_doc.get('lastName', '')}"
 
         if (self.meeting_id):
 
