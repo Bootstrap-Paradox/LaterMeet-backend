@@ -41,16 +41,13 @@ def authenticate_token(function):
                 access_token = access_token_header.split(" ")[1]
 
                 decoded_data = jwt.decode(
-                    access_token, key=os.environ["JWT_SECRET_KEY"], algorithms=["HS256"])
+                    access_token, key=os.environ["JWT_SECRET_KEY_LATERMEET"], algorithms=["HS256"])
 
                 return function(self, request, decoded_data, *data, **kwargs)
             else:
-                print("login to interact")
                 return Response({"notify": [{"status": "danger", "message": "Login to Interact"}]}, status=status.HTTP_401_UNAUTHORIZED)
 
         except Exception as e:
-            print(e)
-            print("you are not allowed")
             return Response({"notify": [{"status": "danger", "message": "Unauthorized"}]}, status=status.HTTP_401_UNAUTHORIZED)
 
     return wrapper

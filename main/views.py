@@ -8,11 +8,9 @@ from rest_framework import status
 class Main(APIView):
 
     def get(self, request, format=None):
-        print("Called")
         return Response({}, status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
-        print(request.data)
         return Response(
             {"msg": "data from the Server"},
             status=status.HTTP_200_OK

@@ -13,6 +13,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 from pathlib import Path
 import os
 
+from corsheaders.defaults import default_methods, default_headers
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -32,10 +34,16 @@ CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
 # ALLOWED_HOSTS = ["0.0.0.0", "192.168.43.83", "192.168.1.100", "localhost"]
-ALLOWED_HOSTS = ["www.latermeet.com", "latermeet.com", "64.227.176.48"]
+ALLOWED_HOSTS = ["www.latermeet.com", "latermeet.com",
+                 "64.227.185.107", "api.latermeet.com", "localhost:3000"]
 
 # Allowing Apis to Access endpoints
-CORS_ORIGIN_ALLOW_ALL = True
+# CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOWED_ORIGIN = ["https://latermeet.com", "https://www.latermeet.com"]
+
+CORS_ALLOW_METHODS = list(default_methods)
+
+CORS_ALLOW_HEADERS = list(default_headers)
 
 # Mailing
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
@@ -63,6 +71,8 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -70,8 +80,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
-    'django.middleware.common.CommonMiddleware',
 ]
 
 ROOT_URLCONF = 'BusinessInteraction.urls'

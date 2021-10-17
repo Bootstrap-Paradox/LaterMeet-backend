@@ -1,6 +1,5 @@
-from utils.operations.Errors import Error, NotAllowed, Restricted
+from utils.operations.Errors import NotAllowed, Restricted
 from bson.objectid import ObjectId
-from pymongo import results
 from pymongo.results import DeleteResult, InsertOneResult, InsertManyResult
 from BusinessInteraction import USER, MEETINGS
 from pymongo.collection import Collection
