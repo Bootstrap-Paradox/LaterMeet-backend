@@ -1,4 +1,3 @@
-import traceback
 from utils.operations.Errors import NotFound
 from utils.utility.utility import authenticate_token, safe
 from utils.operations.meetings import Meetings
@@ -56,7 +55,6 @@ class MeetingQuaters(APIView):
             )
 
         except Exception as e:
-            traceback.print_exc()
             return Response(
                 {"msg": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -97,7 +95,6 @@ class MeetingQuaters(APIView):
             )
 
         except Exception as e:
-            traceback.print_exc()
             return Response(
                 {"msg": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,

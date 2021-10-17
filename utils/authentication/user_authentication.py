@@ -5,19 +5,6 @@ from utils.authentication.authentication import Authentication
 from utils.authentication.Errors import *
 import bcrypt as bc
 
-# Custom Defined Error Classes
-
-
-def authentiate(self, field: dict) -> bool:
-    pass
-
-
-class Meta_Authenticate():
-
-    def __new__(self, class_name, class_base, class_attr):
-        class_attr["Authenticate"] = authentiate
-        return type(class_name, class_base, class_attr)
-
 
 def hashPassword(password):
     return bc.hashpw(bytes(password, 'utf-8'), bc.gensalt())

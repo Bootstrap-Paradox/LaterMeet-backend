@@ -27,7 +27,7 @@ class Authentication:
     def generate_access_token(self, payload: dict = None) -> str:
         payload["exp"] = datetime.utcnow() + timedelta(days=1)
         payload["iat"] = datetime.utcnow()
-        token = jwt.encode(payload, key=environ["JWT_SECRET_KEY"])
+        token = jwt.encode(payload, key=environ["JWT_SECRET_KEY_LATERMEET"])
         return token
 
     @payload_check
@@ -40,7 +40,7 @@ class Authentication:
         pass
 
     def authenticate_access_token(self, access_token: str) -> dict:
-        return jwt.decode(access_token, key=environ["JWT_SECRET_KEY"])
+        return jwt.decode(access_token, key=environ["JWT_SECRET_KEY_LATERMEET"])
 
     def authenticate_refresh_token(self):
         pass
