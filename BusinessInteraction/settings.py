@@ -39,6 +39,7 @@ ALLOWED_HOSTS = ["www.latermeet.com", "latermeet.com",
 
 # Allowing Apis to Access endpoints
 # CORS_ORIGIN_ALLOW_ALL = True
+CORS_ORIGIN_WHITELIST = ["https://latermeet.com", "https://www.latermeet.com"]
 CORS_ALLOWED_ORIGIN = ["https://latermeet.com", "https://www.latermeet.com"]
 
 CORS_ALLOW_METHODS = list(default_methods)
