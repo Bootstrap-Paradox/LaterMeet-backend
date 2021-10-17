@@ -1,10 +1,8 @@
-import traceback
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.views import APIView
 
 from utils.authentication import User
-from utils.operations.Errors import NotAllowed
 from utils.utility.utility import safe
 from utils.utility.utility import authenticate_token
 

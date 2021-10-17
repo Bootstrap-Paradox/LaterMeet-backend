@@ -8,7 +8,6 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 
-import traceback
 
 from utils.authentication.user_authentication import User_Authentication
 
@@ -51,9 +50,8 @@ class Signup(APIView):
         except UserAlreadyExistError:
             return Response({"message": "User Already Exists"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
-            traceback.print_exc()
 
-            return Response({"message": "Action Failed"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     def put(self, request, format=None):
         try:
@@ -77,7 +75,6 @@ class Signup(APIView):
             )
 
         except Exception as e:
-            traceback.print_exc()
             return Response(
                 {"error": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
