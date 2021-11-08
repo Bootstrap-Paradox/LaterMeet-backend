@@ -35,12 +35,13 @@ SESSION_COOKIE_SECURE = True
 
 # ALLOWED_HOSTS = ["0.0.0.0", "192.168.43.83", "192.168.1.100", "localhost"]
 ALLOWED_HOSTS = ["www.latermeet.com", "latermeet.com",
-                 "64.227.185.107", "api.latermeet.com", "localhost:3000"]
+                 "64.227.185.107", "api.latermeet.com", "localhost:3000", "0.0.0.0", "192.168.1.100"]
 
 # Allowing Apis to Access endpoints
 # CORS_ORIGIN_ALLOW_ALL = True
-CORS_ORIGIN_WHITELIST = ["https://latermeet.com", "https://www.latermeet.com"]
-CORS_ALLOWED_ORIGIN = ["https://latermeet.com", "https://www.latermeet.com"]
+CORS_ORIGIN_WHITELIST = ["https://latermeet.com",
+                         "https://www.latermeet.com", "http://0.0.0.0:8000", "http://localhost:3000"]
+CORS_ALLOWED_ORIGIN = CORS_ORIGIN_WHITELIST
 
 CORS_ALLOW_METHODS = list(default_methods)
 
@@ -113,6 +114,22 @@ DATABASES = {
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+
+# DATABASE_NAME = os.environ.get("DATABASE_NAME")
+# DATABASE_USER = os.environ.get("DATABASE_USER")
+# DATABASE_USER_PASSWORD = os.environ.get("DATABASE_USER_PASSWORD")
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'latermeet',
+#         'USER': 'latermeetadmin',
+#         'PASSWORD': 'bd132f8d16177ed745ca9545',
+#         'HOST': 'localhost',
+#         'PORT': '',
+#     }
+# }
 
 
 # Password validation
