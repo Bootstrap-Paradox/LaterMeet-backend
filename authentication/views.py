@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 
+import traceback
 
 from utils.authentication.user_authentication import User_Authentication
 
@@ -48,8 +49,10 @@ class Signup(APIView):
             return Response({"message": "Code Successful Sent"}, status=status.HTTP_201_CREATED)
 
         except UserAlreadyExistError:
+            traceback.print_exc()
             return Response({"message": "User Already Exists"}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
+            traceback.print_exc()
 
             return Response({"message": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -63,18 +66,21 @@ class Signup(APIView):
             raise NotAllowed("Code Incorrect")
 
         except NotAllowed as e:
+            traceback.print_exc()
             return (Response(
                 {"error": str(e)},
                 status=status.HTTP_204_NO_CONTENT,
             ))
 
         except Restricted as e:
+            traceback.print_exc()
             return Response(
                 {"error": str(e)},
                 status=status.HTTP_204_NO_CONTENT,
             )
 
         except Exception as e:
+            traceback.print_exc()
             return Response(
                 {"error": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
