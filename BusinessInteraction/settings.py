@@ -26,7 +26,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ["LATERMEET_DJANGO_SECRET"]
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = os.environ.get('DEGUB_MODE', True)
 
 # Access without https
 CSRF_COOKIE_SECURE = True
@@ -34,8 +34,13 @@ CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
 # ALLOWED_HOSTS = ["0.0.0.0", "192.168.43.83", "192.168.1.100", "localhost"]
+# ALLOWED_HOSTS = ["www.latermeet.com", "latermeet.com",
+#                  "64.227.185.107", "api.latermeet.com", "localhost:3000", "0.0.0.0", "192.168.1.100"]
+
+# Production Testing
+
 ALLOWED_HOSTS = ["www.latermeet.com", "latermeet.com",
-                 "64.227.185.107", "api.latermeet.com", "localhost:3000", "0.0.0.0", "192.168.1.100"]
+                 "64.227.185.107", "api.latermeet.com", "localhost:3000"]
 
 # Allowing Apis to Access endpoints
 # CORS_ORIGIN_ALLOW_ALL = True
