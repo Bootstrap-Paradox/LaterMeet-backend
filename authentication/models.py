@@ -40,8 +40,8 @@ class User(models.Model):
 
         code: str
 
-        # if auth._check_existing_user_with_email(email=user_cred["email"]):
-        #     raise UserAlreadyExistError(user_cred["email"])
+        if auth._check_existing_user_with_email(email=user_cred["email"]):
+            raise UserAlreadyExistError(user_cred["email"])
 
         # Checks weather the code was previously generated for the user
 
