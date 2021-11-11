@@ -47,7 +47,22 @@ class User(Operations):
             {
                 "$set": update_data
             }
-        ).modified_count == 0:
+        ).modified_count > 0:
+
+            self.MEETINGS_REF.update_many(
+                {
+                    "meeting_hosts._id": self.user_id
+                },
+                {
+                    "$set": {
+                        "meeting_hosts.$[elem].name": f"{update_data['firstName']} {update_data['lastName']}"
+                    }
+                },
+                array_filters=[
+                    {"elem._id": self.user_id}
+                ],
+            )
+        else:
             raise NotFound("User Information could Not be Updated")
 
         return True
