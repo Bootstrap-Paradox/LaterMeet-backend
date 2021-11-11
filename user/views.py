@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from utils.authentication import User
 from utils.utility.utility import safe
 from utils.utility.utility import authenticate_token
+import traceback
 
 # Views for User Account
 
@@ -43,6 +44,7 @@ class UserEndpoint(APIView):
             )
 
         except Exception as e:
+            traceback.print_exc()
             return Response(
                 {
                     "msg": str(e),
