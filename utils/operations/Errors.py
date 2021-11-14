@@ -26,3 +26,11 @@ class Restricted(Error):
 
     def __str__(self) -> str:
         return self.message
+
+
+class Expired(Error):
+    def __init__(self, message: str = "Expired") -> None:
+        self.message = message
+
+    def __str__(self):
+        return self.message

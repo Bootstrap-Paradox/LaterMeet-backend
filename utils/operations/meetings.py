@@ -1,4 +1,4 @@
-from utils.operations.Errors import NotAllowed, NotFound
+from utils.operations.Errors import Expired, NotAllowed, NotFound
 from . import Operations
 from bson.objectid import ObjectId
 from datetime import datetime, timedelta
@@ -16,9 +16,9 @@ class Meetings(Operations):
         # TODO: type Check for list
         if timings:
             current_time = datetime.utcnow()
-            cloest_diff = abs(timings[0] - current_time)
-            cloest_index = 0
-            index = 0
+            cloest_diff: int = abs(timings[0] - current_time)
+            cloest_index: int = 0
+            index: int = 0
             for timing in timings:
                 if (diff := abs(timing - current_time)) < cloest_diff:
                     cloest_diff = diff
@@ -42,6 +42,8 @@ class Meetings(Operations):
             }
         )):
             raise NotFound(f"Meeting with {str(self.meeting_id)} Not Found")
+
+        meeting_doc[""]
 
         meeting_doc["meeting_start_time"] = self.find_cloest(
             meeting_doc["meeting_timings"]) or time.mktime(datetime.utcnow().timetuple()) * 1000
@@ -189,6 +191,46 @@ class Meetings(Operations):
             "meeting_url": meeting_data.get("meeting_url", None),
             "meeting_hosts": [{"_id": self.user_id, "name": host_name, "owner": True}],
             "meeting_speakers": [],
-            "meeting_timings": [],
+            "meta_meeting_data": {},
+            "meeting_timings": self._create_timing_blueprint(meeting_data.get("meeting_timing")),
             "meeting_views": 0,
         }
+
+    def _create_timing_blueprint(self, meeting_timing):
+        """
+            meeting_timing: {
+            start_date: <datetime>,
+            start_time: <datetime>,
+            end_date: <datetime>,
+            }
+        """
+        live_template = datetime.utcnow()
+
+        def update_live_template(pacifier):
+            return live_template.strftime(pacifier)
+
+        start_template = datetime(
+            year=int(update_live_template("%Y")),
+            month=int(update_live_template("%-m")),
+            day=int(update_live_template("%-d")),
+            hour=0,
+            minute=0,
+            second=0,
+            microsecond=0,
+        )
+
+        user_data = {
+            "hour": 15,
+            "minute": 15,
+        }
+
+        start_time = start_template + \
+            timedelta(hours=user_data["hour"], minutes=user_data["minute"])
+        end_time = start_time + timedelta(days=28, hours=5)
+
+        return {
+            "start_time": start_time,
+            "end_time": end_time,
+        }
+
+        pass
