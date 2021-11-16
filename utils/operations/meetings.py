@@ -29,6 +29,29 @@ class Meetings(Operations):
 
         return None
 
+    @staticmethod
+    def new_find_closet(timing_data: dict, meta_data: dict):
+        # Meta data must contain Meeting Duration
+        meta_data["video_duration"] = 30  # Duration in Minutes
+
+        # if the Meeting has expired
+        if (current_time := datetime.utcnow()) > timing_data["end_time"]:
+            raise Expired("Meeting has Expired")
+
+        if current_time > timing_data["start_time"] - timedelta(minutes=15):
+            return time.mktime(timing_data["start_time"].timetuple()) * 1000
+
+        # days: int = 1
+        # while True:
+        #     if current_time < (time_slot := timing_data["start_time"] + timedelta(days=days)):
+        #         pass
+
+        #     elif current_time > time_slot and current_time < (next_slot := time_slot + timedelta(days=1)):
+        #         pass
+
+        #     elif current_time > timing_data["end_time"]:
+        #         raise Expired("Meeting has Expired")
+
     def join_meeting(self):
         # TODO: Time Check with Request Timezone
         if not (meeting_doc := self.MEETINGS_REF.find_one_and_update(
