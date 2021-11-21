@@ -11,35 +11,55 @@ class Meetings(Operations):
     def __init__(self, *args, **kwargs):
         super(Meetings, self).__init__(*args, **kwargs)
 
+    # @staticmethod
+    # def find_cloest(timings: list = None):
+    #     # TODO: type Check for list
+    #     if timings:
+    #         current_time = datetime.utcnow()
+    #         cloest_diff: int = abs(timings[0] - current_time)
+    #         cloest_index: int = 0
+    #         index: int = 0
+    #         for timing in timings:
+    #             if (diff := abs(timing - current_time)) < cloest_diff:
+    #                 cloest_diff = diff
+    #                 cloest_index = index
+    #             index += 1
+
+    #         return time.mktime(timings[cloest_index].timetuple()) * 1000
+
+    #     return None
+
     @staticmethod
-    def find_cloest(timings: list = None):
-        # TODO: type Check for list
-        if timings:
-            current_time = datetime.utcnow()
-            cloest_diff: int = abs(timings[0] - current_time)
-            cloest_index: int = 0
-            index: int = 0
-            for timing in timings:
-                if (diff := abs(timing - current_time)) < cloest_diff:
-                    cloest_diff = diff
-                    cloest_index = index
-                index += 1
+    def find_closet(timing_data: dict, meta_data: dict = None):
 
-            return time.mktime(timings[cloest_index].timetuple()) * 1000
-
-        return None
-
-    @staticmethod
-    def new_find_closet(timing_data: dict, meta_data: dict):
+        def convert_time(time_data: dict, end=False) -> datetime:
+            if end:
+                return datetime(
+                    year=int(time_data["year"]),
+                    month=int(time_data["month"]),
+                    day=int(time_data["day"])
+                )
+            else:
+                return datetime(
+                    year=int(time_data["year"]),
+                    month=int(time_data["month"]),
+                    day=int(time_data["day"]),
+                    hour=int(time_data["hour"]),
+                    minute=int(time_data["minute"])
+                )
         # Meta data must contain Meeting Duration
         meta_data["video_duration"] = 30  # Duration in Minutes
 
         # if the Meeting has expired
-        if (current_time := datetime.utcnow()) > timing_data["end_time"]:
+        newTime = convert_time(timing_data["end_date"], end=True)
+        print(newTime)
+        if (datetime.utcnow() < convert_time(time_data=timing_data["start_time"])):
+            return "Not Yet Started"
+        if (current_time := datetime.utcnow()) > newTime:
             raise Expired("Meeting has Expired")
 
-        if current_time > timing_data["start_time"] - timedelta(minutes=15):
-            return time.mktime(timing_data["start_time"].timetuple()) * 1000
+        if current_time > convert_time(timing_data["start_time"]) - timedelta(minutes=15):
+            return time.mktime(convert_time(timing_data["start_time"]).timetuple()) * 1000
 
         # days: int = 1
         # while True:
@@ -66,12 +86,16 @@ class Meetings(Operations):
         )):
             raise NotFound(f"Meeting with {str(self.meeting_id)} Not Found")
 
-        meeting_doc[""]
+        # meeting_doc[""]
 
-        meeting_doc["meeting_start_time"] = self.find_cloest(
-            meeting_doc["meeting_timings"]) or time.mktime(datetime.utcnow().timetuple()) * 1000
+        # meeting_doc["meeting_start_time"] = self.find_cloest(
+        #     meeting_doc["meeting_timings"]) or time.mktime(datetime.utcnow().timetuple()) * 1000
+
+        meeting_doc["meeting_start_time"] = self.find_closet(
+            timing_data=meeting_doc["meeting_timings"], meta_data={})
 
         del meeting_doc["meeting_timings"]
+        print(meeting_doc)
 
         return meeting_doc
 
@@ -215,7 +239,7 @@ class Meetings(Operations):
             "meeting_hosts": [{"_id": self.user_id, "name": host_name, "owner": True}],
             "meeting_speakers": [],
             "meta_meeting_data": {},
-            "meeting_timings": self._create_timing_blueprint(meeting_data.get("meeting_timing")),
+            "meeting_timings": self._create_timing_blueprint(meeting_data.get("meeting_timings")),
             "meeting_views": 0,
         }
 
