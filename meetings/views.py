@@ -98,6 +98,7 @@ class MeetingQuaters(APIView):
             )
 
         except Exception as e:
+            traceback.print_exc()
             return Response(
                 {"msg": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,

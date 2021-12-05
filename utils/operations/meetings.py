@@ -11,29 +11,13 @@ class Meetings(Operations):
     def __init__(self, *args, **kwargs):
         super(Meetings, self).__init__(*args, **kwargs)
 
-    # @staticmethod
-    # def find_cloest(timings: list = None):
-    #     # TODO: type Check for list
-    #     if timings:
-    #         current_time = datetime.utcnow()
-    #         cloest_diff: int = abs(timings[0] - current_time)
-    #         cloest_index: int = 0
-    #         index: int = 0
-    #         for timing in timings:
-    #             if (diff := abs(timing - current_time)) < cloest_diff:
-    #                 cloest_diff = diff
-    #                 cloest_index = index
-    #             index += 1
-
-    #         return time.mktime(timings[cloest_index].timetuple()) * 1000
-
-    #     return None
-
     @staticmethod
     def find_closet(timing_data: dict, meta_data: dict = None):
 
-        def convert_time(time_data: dict, end=False) -> datetime:
+        def convert_time(time_data: dict, end=False, day: int = 0, month: int = 0) -> datetime:
             if end:
+                print("timg")
+                print(time_data)
                 return datetime(
                     year=int(time_data["year"]),
                     month=int(time_data["month"]),
@@ -42,35 +26,28 @@ class Meetings(Operations):
             else:
                 return datetime(
                     year=int(time_data["year"]),
-                    month=int(time_data["month"]),
-                    day=int(time_data["day"]),
+                    month=int(time_data["month"]) if not month else month,
+                    day=int(time_data["day"]) if not day else day,
                     hour=int(time_data["hour"]),
                     minute=int(time_data["minute"])
                 )
+
         # Meta data must contain Meeting Duration
         meta_data["video_duration"] = 30  # Duration in Minutes
 
         # if the Meeting has expired
-        newTime = convert_time(timing_data["end_date"], end=True)
-        print(newTime)
+
         if (datetime.utcnow() < convert_time(time_data=timing_data["start_time"])):
+            # Check weather the Meeting Has started or not
             return "Not Yet Started"
-        if (current_time := datetime.utcnow()) > newTime:
+
+        if (current_time := datetime.utcnow()) > convert_time(timing_data["end_date"], end=True):
+            # Checks if the Meeting has Expired
             raise Expired("Meeting has Expired")
 
         if current_time > convert_time(timing_data["start_time"]) - timedelta(minutes=15):
-            return time.mktime(convert_time(timing_data["start_time"]).timetuple()) * 1000
-
-        # days: int = 1
-        # while True:
-        #     if current_time < (time_slot := timing_data["start_time"] + timedelta(days=days)):
-        #         pass
-
-        #     elif current_time > time_slot and current_time < (next_slot := time_slot + timedelta(days=1)):
-        #         pass
-
-        #     elif current_time > timing_data["end_time"]:
-        #         raise Expired("Meeting has Expired")
+            # Live Current time to play
+            return time.mktime(convert_time(time_data=timing_data["start_time"], day=datetime.utcnow().day).timetuple()) * 1000
 
     def join_meeting(self):
         # TODO: Time Check with Request Timezone
@@ -91,8 +68,11 @@ class Meetings(Operations):
         # meeting_doc["meeting_start_time"] = self.find_cloest(
         #     meeting_doc["meeting_timings"]) or time.mktime(datetime.utcnow().timetuple()) * 1000
 
+        print()
+        print(meeting_doc["meeting_timings"]["schedule"])
+
         meeting_doc["meeting_start_time"] = self.find_closet(
-            timing_data=meeting_doc["meeting_timings"], meta_data={})
+            timing_data=meeting_doc["meeting_timings"], meta_data={}) if meeting_doc["meeting_timings"]["schedule"] else time.mktime(datetime.utcnow().timetuple()) * 1000
 
         del meeting_doc["meeting_timings"]
         print(meeting_doc)
@@ -276,8 +256,19 @@ class Meetings(Operations):
         end_time = start_time + timedelta(days=28, hours=5)
 
         return {
-            "start_time": start_time,
-            "end_time": end_time,
+            "start_time": {
+                "year": None,
+                "month": None,
+                "day": None,
+                "hour": None,
+                "minute": None,
+            },
+            "end_time": {
+                "year": None,
+                "month": None,
+                "day": None,
+                "hour": None,
+                "minute": None,
+            },
+            "schedule": False,
         }
-
-        pass
