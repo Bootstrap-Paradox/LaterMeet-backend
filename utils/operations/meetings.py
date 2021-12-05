@@ -1,4 +1,4 @@
-from utils.operations.Errors import NotAllowed, NotFound
+from utils.operations.Errors import Expired, NotAllowed, NotFound
 from . import Operations
 from bson.objectid import ObjectId
 from datetime import datetime, timedelta
@@ -12,22 +12,42 @@ class Meetings(Operations):
         super(Meetings, self).__init__(*args, **kwargs)
 
     @staticmethod
-    def find_cloest(timings: list = None):
-        # TODO: type Check for list
-        if timings:
-            current_time = datetime.utcnow()
-            cloest_diff = abs(timings[0] - current_time)
-            cloest_index = 0
-            index = 0
-            for timing in timings:
-                if (diff := abs(timing - current_time)) < cloest_diff:
-                    cloest_diff = diff
-                    cloest_index = index
-                index += 1
+    def find_closet(timing_data: dict, meta_data: dict = None):
 
-            return time.mktime(timings[cloest_index].timetuple()) * 1000
+        def convert_time(time_data: dict, end=False, day: int = 0, month: int = 0) -> datetime:
+            if end:
+                print("timg")
+                print(time_data)
+                return datetime(
+                    year=int(time_data["year"]),
+                    month=int(time_data["month"]),
+                    day=int(time_data["day"])
+                )
+            else:
+                return datetime(
+                    year=int(time_data["year"]),
+                    month=int(time_data["month"]) if not month else month,
+                    day=int(time_data["day"]) if not day else day,
+                    hour=int(time_data["hour"]),
+                    minute=int(time_data["minute"])
+                )
 
-        return None
+        # Meta data must contain Meeting Duration
+        meta_data["video_duration"] = 30  # Duration in Minutes
+
+        # if the Meeting has expired
+
+        if (datetime.utcnow() < convert_time(time_data=timing_data["start_time"])):
+            # Check weather the Meeting Has started or not
+            return "Not Yet Started"
+
+        if (current_time := datetime.utcnow()) > convert_time(timing_data["end_date"], end=True):
+            # Checks if the Meeting has Expired
+            raise Expired("Meeting has Expired")
+
+        if current_time > convert_time(timing_data["start_time"]) - timedelta(minutes=15):
+            # Live Current time to play
+            return time.mktime(convert_time(time_data=timing_data["start_time"], day=datetime.utcnow().day).timetuple()) * 1000
 
     def join_meeting(self):
         # TODO: Time Check with Request Timezone
@@ -43,10 +63,19 @@ class Meetings(Operations):
         )):
             raise NotFound(f"Meeting with {str(self.meeting_id)} Not Found")
 
-        meeting_doc["meeting_start_time"] = self.find_cloest(
-            meeting_doc["meeting_timings"]) or time.mktime(datetime.utcnow().timetuple()) * 1000
+        # meeting_doc[""]
+
+        # meeting_doc["meeting_start_time"] = self.find_cloest(
+        #     meeting_doc["meeting_timings"]) or time.mktime(datetime.utcnow().timetuple()) * 1000
+
+        print()
+        print(meeting_doc["meeting_timings"]["schedule"])
+
+        meeting_doc["meeting_start_time"] = self.find_closet(
+            timing_data=meeting_doc["meeting_timings"], meta_data={}) if meeting_doc["meeting_timings"]["schedule"] else time.mktime(datetime.utcnow().timetuple()) * 1000
 
         del meeting_doc["meeting_timings"]
+        print(meeting_doc)
 
         return meeting_doc
 
@@ -189,6 +218,57 @@ class Meetings(Operations):
             "meeting_url": meeting_data.get("meeting_url", None),
             "meeting_hosts": [{"_id": self.user_id, "name": host_name, "owner": True}],
             "meeting_speakers": [],
-            "meeting_timings": [],
+            "meta_meeting_data": {},
+            "meeting_timings": self._create_timing_blueprint(meeting_data.get("meeting_timings")),
             "meeting_views": 0,
+        }
+
+    def _create_timing_blueprint(self, meeting_timing):
+        """
+            meeting_timing: {
+            start_date: <datetime>,
+            start_time: <datetime>,
+            end_date: <datetime>,
+            }
+        """
+        live_template = datetime.utcnow()
+
+        def update_live_template(pacifier):
+            return live_template.strftime(pacifier)
+
+        start_template = datetime(
+            year=int(update_live_template("%Y")),
+            month=int(update_live_template("%-m")),
+            day=int(update_live_template("%-d")),
+            hour=0,
+            minute=0,
+            second=0,
+            microsecond=0,
+        )
+
+        user_data = {
+            "hour": 15,
+            "minute": 15,
+        }
+
+        start_time = start_template + \
+            timedelta(hours=user_data["hour"], minutes=user_data["minute"])
+        end_time = start_time + timedelta(days=28, hours=5)
+
+        return {
+            "start_time": {
+                "year": None,
+                "month": None,
+                "day": None,
+                "hour": None,
+                "minute": None,
+            },
+            "end_time": {
+                "year": None,
+                "month": None,
+                "day": None,
+                "hour": None,
+                "minute": None,
+            },
+            "schedule": False,
         }
