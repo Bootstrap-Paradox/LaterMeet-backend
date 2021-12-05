@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status
 import time
 from datetime import datetime
+import traceback
 
 # Create your views here.
 
@@ -22,11 +23,13 @@ class MeetingsEndpoint(APIView):
             )
 
         except NotFound as e:
+            traceback.print_exc()
             return Response(
                 {"msg": str(e)},
                 status=status.HTTP_404_NOT_FOUND,
             )
         except Exception as e:
+            traceback.print_exc()
             return Response(
                 {"msg": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -95,6 +98,7 @@ class MeetingQuaters(APIView):
             )
 
         except Exception as e:
+            traceback.print_exc()
             return Response(
                 {"msg": str(e)},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
