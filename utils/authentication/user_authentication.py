@@ -102,4 +102,5 @@ class User_Authentication(Authentication):
             "lastName": user_data.get("lastName", ""),
             "email": user_data.get("email", ""),
             "meeting_ids": [],
+            "account_tier": 0  # Free Account
         }
