@@ -6,6 +6,9 @@ __pycache__
 
 /*.sqlite3
 
+/utils/operations/cloud.py
+/backup_requirements.txt
+
 # Mac Specific
 
 .DS_Store
