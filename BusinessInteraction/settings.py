@@ -34,13 +34,13 @@ CSRF_COOKIE_SECURE = True
 SESSION_COOKIE_SECURE = True
 
 # ALLOWED_HOSTS = ["0.0.0.0", "192.168.43.83", "192.168.1.100", "localhost"]
-ALLOWED_HOSTS = ["www.latermeet.com", "latermeet.com",
-                 "64.227.185.107", "api.latermeet.com", "localhost:3000"]
+# ALLOWED_HOSTS = ["www.latermeet.com", "latermeet.com",
+#                  "64.227.185.107", "api.latermeet.com", "localhost:3000"]
 
 # Production Testing
 
-# ALLOWED_HOSTS = ["www.latermeet.com", "latermeet.com",
-#                  "64.227.185.107", "api.latermeet.com", "localhost:3000", "192.168.1.101", "0.0.0.0", "172.20.10.2"]
+ALLOWED_HOSTS = ["www.latermeet.com", "latermeet.com",
+                 "64.227.185.107", "api.latermeet.com", "localhost:3000", "192.168.1.101", "0.0.0.0", "172.20.10.2"]
 
 # Allowing Apis to Access endpoints
 # CORS_ORIGIN_ALLOW_ALL = True

@@ -81,6 +81,13 @@ class Meetings(Operations):
 
     @Operations.verify_user
     def create_meeting(self, user_info, meeting_data: dict) -> dict:
+
+        # Check Tier
+
+        if user_info["account_tier"] == 0:
+            if len(user_info["meeting_ids"]) > 3:
+                raise NotAllowed("Max Meeting Reached")
+
         # Create Meeting
         inserted_meeting = self.insert(
             self.MEETINGS_REF, self.__create_blueprint(meeting_data, host_name=f"{user_info['firstName']} {user_info['lastName']}"))
