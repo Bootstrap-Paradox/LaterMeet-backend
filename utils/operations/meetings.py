@@ -201,7 +201,19 @@ class Meetings(Operations):
             {
                 "_id": self.meeting_id
             }
-        ).deleted_count == 0:
+        ).deleted_count > 0:
+            self.update(
+                self.USER_REF,
+                {
+                    "_id": self.user_id
+                },
+                {
+                    "$pull": {
+                        "meeting_ids": self.meeting_id
+                    }
+                }
+            )
+        else:
             raise NotFound("Document with Id Not Found")
 
         return True
